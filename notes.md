@@ -13,3 +13,8 @@ Deactivate venv
 Install Dependencies
 
     pip install fastapi[all]
+
+Start Server
+
+    uvicorn main:app --reload
+    
