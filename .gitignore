@@ -1,4 +1,4 @@
 __pycache__/
 venv/
 .idea/
-fastapi/app/password.py
+app/secrets.py

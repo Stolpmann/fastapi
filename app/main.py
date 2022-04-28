@@ -1,4 +1,4 @@
-from .password import password
+from .secrets import password
 from typing import Optional
 from fastapi import FastAPI, Response, status, HTTPException
 from fastapi.params import Body,Optional
