@@ -7,8 +7,19 @@ from random import randrange
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
+from sqlalchemy.orm import Session
+from . import models
+from .database import engine, SessionLocal, get_db
+
+#Creates Tables in postgress
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+
+#Connects to database through session object
+
+
 
 #Creates Post Schema and defines data types
 class Post(BaseModel):
@@ -57,48 +68,58 @@ def root():
 #HTTP GET REQUEST
 @app.get("/posts")
 def get_posts():
-    return {"data": my_posts}
+    # Executes SQL query via cursor var
+    cursor.execute("""SELECT * FROM posts """)
+    posts = cursor.fetchall()
+    return {"data": posts}
 
 # HTTP POST REQUEST
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
-
-#Creates Function that takes pydantic model validates data and assigns it into a variable
 def create_post(post: Post):
-    # Convert Pydantic model into Dictionary
-    post_dict = post.dict()
-    post_dict['id'] = randrange(0, 10000000)
-    # Append post to dictionary of posts
-    my_posts.append(post_dict)
-    return {"data": post_dict }
+    # Stages new post
+    # Values use '%s' to prevent SQL injection attack
+    cursor.execute("""INSERT INTO posts (title,content,published) VALUES (%s,%s,%s) RETURNING * """,
+                   (post.title, post.content, post.published))
+    new_post = cursor.fetchone()
+    #pushes new post to sql database
+    conn.commit()
+    return {"data": new_post}
 
 # use path parameter ({id}) to get url of specific post
 @app.get("/posts/{id}")
+def get_post(id: int):
+    cursor.execute("""SELECT * FROM posts WHERE id = %s """, (id,))
+    post = cursor.fetchone()
+    if not post:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"post with id {id} was not found")
 
-def get_post(id):
-    print(id)
-    return {"post_detail": f"here is Post {id}"}
+    return {"post_detail": post}
 
 @app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(id: int):
-    index = find_index_post(id)
 
-    if index == None:
-        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = f"post with id {id} was does not exist")
+    cursor.execute("""DELETE FROM posts WHERE id = %s RETURNING *""", (id,))
+    deleted_post = cursor.fetchone()
+    conn.commit()
 
-    my_posts.pop(index)
+    if deleted_post == None:
+        raise HTTPException(status_code = status.HTTP_404_NOT_FOUND,
+                            detail = f"post with id {id} does not exist")
 
 
-    return {'message': f"post with id {id} was succesfully deleted"}
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 @app.put("/posts/{id}")
 def update_post(id: int, post: Post):
-    index = find_index_post(id)
-    if index == None:
+
+    cursor.execute("""UPDATE posts  SET title = %s,content = %s,published = %s WHERE id = %s RETURNING *""",
+                   (post.title, post.content, post.published, id,))
+    updated_post = cursor.fetchone()
+    conn.commit()
+
+    if updated_post == None:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND, detail = f"post with id {id} was does not exist")
 
-    #logic for returning updated info
-    post_dict = post.dict()
-    post_dict['id'] = id
-    my_posts[index] = post_dict
-    return {"data": post_dict}
+    return {"data": updated_post}
 
