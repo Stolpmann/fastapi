@@ -1,8 +1,12 @@
+from .password import password
 from typing import Optional
 from fastapi import FastAPI, Response, status, HTTPException
 from fastapi.params import Body,Optional
 from pydantic import BaseModel
 from random import randrange
+import psycopg2
+from psycopg2.extras import RealDictCursor
+import time
 
 app = FastAPI()
 
@@ -12,6 +16,23 @@ class Post(BaseModel):
     content: str
     published: bool = True
     rating: Optional[int] = None
+
+
+# connect pg admin to python app
+# "cursor_factory=RealDictCursor" this variable returns column name mapped with values
+while True:
+    try:
+        conn = psycopg2.connect(host = 'localhost', database = 'fastapi', user='postgres',
+                                password=password, cursor_factory=RealDictCursor
+                                )
+        cursor = conn.cursor()
+        print("Database connection was successful!")
+        break
+
+    except Exception as error:
+        print("Database connection failed!")
+        print("Error: ", error)
+        time.sleep(3)
 
 # array of posts
 my_posts = [{"title": "title of post 1", "content": "content of post 1", "id": 1},
