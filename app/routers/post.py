@@ -7,7 +7,10 @@ from ..database import SessionLocal, get_db
 
 router = APIRouter(
     # hardcode http prefix to all post routers
-    prefix = "/posts"
+    prefix = "/posts",
+
+    # Group users together in /docs
+    tags = ['Posts']
 )
 
 

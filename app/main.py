@@ -10,7 +10,7 @@ import time
 from sqlalchemy.orm import Session
 from . import models, schemas, utils
 from .database import engine, SessionLocal, get_db
-from .routers import post,user
+from .routers import post, user, auth
 
 
 #Creates Tables in postgress
@@ -49,9 +49,11 @@ def find_index_post(id):
         if p['id'] == id:
             return i
 
-#allows program to search post.py and user.py to check if any HTTP request match functions
+# allows program to search post.py and user.py to check if any HTTP request match functions
+
 app.include_router(post.router)
 app.include_router(user.router)
+app.include_router(auth.router)
 
 
 # Path Operation
