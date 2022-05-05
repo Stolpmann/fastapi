@@ -2,23 +2,6 @@ from pydantic import BaseModel, EmailStr
 from datetime import datetime
 from typing import Optional
 
-#Creates Post Schema and defines data types
-class PostBase(BaseModel):
-    title: str
-    content: str
-    published: bool = True
-
-class PostCreate(PostBase):
-    pass
-
-## Inherits Postbase class
-class Post(PostBase):
-    id: int
-    created_at: datetime
-
-    ## allows sql query to be converted to python dict
-    class Config:
-        orm_mode = True
 
 
 class UserCreate(BaseModel):
@@ -46,3 +29,23 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     id: Optional[str] = None
+
+#Creates Post Schema and defines data types
+class PostBase(BaseModel):
+    title: str
+    content: str
+    published: bool = True
+
+class PostCreate(PostBase):
+    pass
+
+## Inherits Postbase class
+class Post(PostBase):
+    id: int
+    created_at: datetime
+    owner_id: int
+    owner: UserOut
+
+    ## allows sql query to be converted to python dict
+    class Config:
+        orm_mode = True
