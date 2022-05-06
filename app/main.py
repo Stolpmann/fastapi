@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from random import randrange
 from . import models
 from .database import engine, SessionLocal
-from .routers import post, user, auth
+from .routers import post, user, auth, vote
 
 
 #Creates Tables in postgress
@@ -16,6 +16,7 @@ app = FastAPI()
 app.include_router(post.router)
 app.include_router(user.router)
 app.include_router(auth.router)
+app.include_router(vote.router)
 
 
 # Path Operation
