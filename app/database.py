@@ -2,6 +2,7 @@ from .secrets import SQL_info
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+import time
 
 SQLALCHEMY_DATABASE_URL = SQL_info
 
@@ -19,3 +20,20 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+# connect pg admin to python app
+# "cursor_factory=RealDictCursor" this variable returns column name mapped with values
+# while True:
+#     try:
+#         conn = psycopg2.connect(host = 'localhost', database = 'fastapi', user='postgres',
+#                                 password=password, cursor_factory=RealDictCursor
+#                                 )
+#         cursor = conn.cursor()
+#         print("Database connection was successful!")
+#         break
+#
+#     except Exception as error:
+#         print("Database connection failed!")
+#         print("Error: ", error)
+#         time.sleep(3)

@@ -1,9 +1,10 @@
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
-from. import schemas,database, models
+from . import schemas,database, models
 from fastapi import Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
+from .secrets import SECRET
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='login')
 
@@ -11,7 +12,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl='login')
 #ALGORITHM
 #Expiration TIme
 
-SECRET_KEY = "7c7cdcead1e8c9e68ce22c834f049c2e8879671893f2384cb40951a87a62997e"
+SECRET_KEY = SECRET
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
