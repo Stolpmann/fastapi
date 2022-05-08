@@ -4,6 +4,7 @@ from . import models
 from .database import engine, SessionLocal
 from .routers import post, user, auth, vote
 
+print(settings.database_username)
 
 #Creates Tables in postgress
 models.Base.metadata.create_all(bind=engine)
