@@ -16,7 +16,7 @@ class Post(Base):
     published = Column(Boolean, server_default='True', nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
 
-    # Rewlationship in SQL ALChemy fetches info that is related
+    # Relationship in SQL ALChemy fetches info that is related
     owner = relationship("User")
 
 class User(Base):
