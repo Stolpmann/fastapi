@@ -3,14 +3,28 @@ from random import randrange
 from . import models
 from .database import engine, SessionLocal
 from .routers import post, user, auth, vote
+from fastapi.middleware.cors import CORSMiddleware
 
-print(settings.database_username)
 
 #Creates Tables in postgress
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
+origins = [
+    "https://www.google.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:8080",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # allows program to search post.py and user.py to check if any HTTP request match functions
 
