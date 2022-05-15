@@ -3,7 +3,9 @@ from random import randrange
 from . import models
 from .database import engine, SessionLocal
 from .routers import post, user, auth, vote
+from .config import settings
 from fastapi.middleware.cors import CORSMiddleware
+
 
 
 #Creates Tables in postgress
@@ -12,8 +14,6 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 origins = [
-    "https://www.google.com",
-    "https://localhost.tiangolo.com",
     "http://localhost",
     "http://localhost:8080",
 ]
